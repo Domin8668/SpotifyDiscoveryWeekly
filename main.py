@@ -43,11 +43,10 @@ class SaveSongs:
         # Creating a new playlist.
         self.new_playlist_id = self.create_playlist()
 
-        query = "https://api.spotify.com/v1/playlists/{}/tracks?uris={}".format(
-            self.new_playlist_id, self.tracks)
-
-        response = requests.post(query, headers={"Content-Type": "application/json",
-                                                 "Authorization": "Bearer {}".format(self.spotify_token)})
+        query = f'https://api.spotify.com/v1/playlists/{self.new_playlist_id}/tracks?uris={self.tracks}'
+        headers = {"Content-Type": "application/json",
+                   "Authorization": f'Bearer {self.spotify_token}'}
+        response = requests.post(query, headers=headers)
         print(f'{response.json=}')
 
     def create_playlist(self):
@@ -60,7 +59,7 @@ class SaveSongs:
         monday = monday.strftime("%d/%m/%Y")
         print(f'{monday=}')
 
-        name = f'{monday}discover weekly'
+        name = f'Discover Weekly {monday}'
         query = f'https://api.spotify.com/v1/users/{Data.spotify_user_id}/playlists'
 
         request_body = json.dumps({
