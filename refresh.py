@@ -22,7 +22,7 @@ class Refresh:
         response = requests.post(query, data=data, headers=headers)
 
         response_json = response.json()
-        print(response_json)
+        print(f'{response_json}')
         return response_json["access_token"]
 
 

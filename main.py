@@ -1,5 +1,5 @@
 from secrets import Data
-from datetime import date
+from datetime import date, timedelta
 from refresh import Refresh
 import requests
 import json
@@ -17,8 +17,7 @@ class SaveSongs:
     def call_refresh(self):
         print("Refreshing token...")
         # Refreshing the authorization token.
-        refresh_caller = Refresh()
-        self.spotify_token = refresh_caller.refresh()
+        self.spotify_token = Refresh.refresh()
         # Finding songs.
         self.find_songs()
 
@@ -30,12 +29,12 @@ class SaveSongs:
                    "Authorization": f'Bearer {self.spotify_token}'}
         # Getting the playlist data.
         response = requests.get(query, headers=headers)
-        response_json = response.json()
         print(f'{response=}')
+        response_json = response.json()
 
         tracks_list = [i["track"]["uri"] for i in response_json["items"]]
         self.tracks = ",".join(tracks_list)
-        # print(f'{self.tracks}')
+        print(f'{self.tracks}')
 
         self.add_to_playlist()
 
@@ -49,27 +48,30 @@ class SaveSongs:
 
         response = requests.post(query, headers={"Content-Type": "application/json",
                                                  "Authorization": "Bearer {}".format(self.spotify_token)})
-
-        print(response.json)
+        print(f'{response.json=}')
 
     def create_playlist(self):
         # TODO
+        # Check if this playlist already exists
+        # and only create a new one if it doesn't exist.
         print("Trying to create playlist...")
         today = date.today()
+        monday = today - timedelta(days=today.weekday())
+        monday = monday.strftime("%d/%m/%Y")
+        print(f'{monday=}')
 
-        today = today.strftime("%d/%m/%Y")
-
-        query = f"https://api.spotify.com/v1/users/{Data.spotify_user_id}/playlists"
+        name = f'{monday}discover weekly'
+        query = f'https://api.spotify.com/v1/users/{Data.spotify_user_id}/playlists'
 
         request_body = json.dumps({
-            "name": today + " discover weekly",
+            "name": name,
             "description": "Discover weekly rescued once again from the brink of destruction "
                            "by your friendly neighbourhood python script", "public": True
         })
 
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.spotify_token}"
+            "Authorization": f'Bearer {self.spotify_token}'
         }
         response = requests.post(query, data=request_body, headers=headers)
 
