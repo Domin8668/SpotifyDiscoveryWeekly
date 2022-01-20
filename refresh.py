@@ -1,27 +1,25 @@
-from secrets import client_creds_base64, refresh_token
+from secrets import Data
 import requests
-import json
 
 
 class Refresh:
     def __init__(self):
-        self.refresh_token = refresh_token
-        self.client_creds_base64 = client_creds_base64
+        self.refresh_token = Data.refresh_token
+        self.client_creds_base64 = Data.client_creds_base64
 
-    def refresh(self):
+    @staticmethod
+    def refresh():
         query = "https://accounts.spotify.com/api/token"
         data = {
             "grant_type": "refresh_token",
-            "refresh_token": refresh_token
+            "refresh_token": Data.refresh_token
         }
         headers = {
-            "Authorization": "Basic " + client_creds_base64,
+            "Authorization": "Basic " + Data.client_creds_base64,
             "Content-Type": "application/x-www-form-urlencoded"
         }
 
-        response = requests.post(query,
-                                 data=data,
-                                 headers=headers)
+        response = requests.post(query, data=data, headers=headers)
 
         response_json = response.json()
         print(response_json)

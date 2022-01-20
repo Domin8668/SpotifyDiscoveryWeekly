@@ -1,4 +1,4 @@
-from secrets import redirect_uri, client_creds_base64, spotify_user_id,  discover_weekly_id
+from secrets import Data
 from datetime import date
 from refresh import Refresh
 import requests
@@ -7,29 +7,29 @@ import json
 
 class SaveSongs:
     def __init__(self):
-        self.user_id = spotify_user_id
-        self.spotify_token = "AQBtJO9gXoZEew79eoecggYcrSabg4igWaF7VRDGVbF2YaK3piATbsvfDlS9Jf6imOAP0APrwA6OIeSwxypmOlGpFaYdZpD2wf_4hlpJRtM9zU4Zl0X-9rKyavDpLR7E5u4"
-        self.discover_weekly_id = discover_weekly_id
+        self.user_id = Data.spotify_user_id
+        self.spotify_token = "AQBtJO9gXoZEew79eoecggYcrSabg4igWaF7VRDGVbF2YaK3piATbsvfDlS9Jf6imOAP0APrwA6OIeSwx" \
+                             "ypmOlGpFaYdZpD2wf_4hlpJRtM9zU4Zl0X-9rKyavDpLR7E5u4"
+        self.discover_weekly_id = Data.discover_weekly_id
         self.tracks = ""
         self.new_playlist_id = ""
 
     def call_refresh(self):
         print("Refreshing token...")
         # Refreshing the authorization token.
-        refreshCaller = Refresh()
-        self.spotify_token = refreshCaller.refresh()
+        refresh_caller = Refresh()
+        self.spotify_token = refresh_caller.refresh()
         # Finding songs.
         self.find_songs()
 
     def find_songs(self):
 
         print("Finding songs in discover weekly...")
-        query = f'https://api.spotify.com/v1/playlists/{discover_weekly_id}/tracks'
+        query = f'https://api.spotify.com/v1/playlists/{Data.discover_weekly_id}/tracks'
         headers = {"Content-Type": "application/json",
                    "Authorization": f'Bearer {self.spotify_token}'}
         # Getting the playlist data.
         response = requests.get(query, headers=headers)
-
         response_json = response.json()
         print(f'{response=}')
 
@@ -57,12 +57,12 @@ class SaveSongs:
         print("Trying to create playlist...")
         today = date.today()
 
-        todayFormatted = today.strftime("%d/%m/%Y")
+        today = today.strftime("%d/%m/%Y")
 
-        query = f"https://api.spotify.com/v1/users/{spotify_user_id}/playlists"
+        query = f"https://api.spotify.com/v1/users/{Data.spotify_user_id}/playlists"
 
         request_body = json.dumps({
-            "name": todayFormatted + " discover weekly",
+            "name": today + " discover weekly",
             "description": "Discover weekly rescued once again from the brink of destruction "
                            "by your friendly neighbourhood python script", "public": True
         })
@@ -81,6 +81,7 @@ class SaveSongs:
 def main():
     s = SaveSongs()
     s.call_refresh()
+
 
 if __name__ == "__main__":
     main()
