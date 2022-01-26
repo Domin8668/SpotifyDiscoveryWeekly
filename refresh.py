@@ -9,6 +9,7 @@ class Refresh:
 
     @staticmethod
     def refresh():
+        # Creating a POST request to the api to get a fresh token.
         query = "https://accounts.spotify.com/api/token"
         data = {
             "grant_type": "refresh_token",
@@ -18,13 +19,6 @@ class Refresh:
             "Authorization": "Basic " + Data.client_creds_base64,
             "Content-Type": "application/x-www-form-urlencoded"
         }
-
         response = requests.post(query, data=data, headers=headers)
 
-        response_json = response.json()
-        print(f'{response_json}')
-        return response_json["access_token"]
-
-
-a = Refresh()
-a.refresh()
+        return response.json()["access_token"]
