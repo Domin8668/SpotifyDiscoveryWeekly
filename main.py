@@ -83,7 +83,7 @@ class SaveSongs:
                    "Authorization": f'Bearer {self.spotify_token}'}
         response = requests.post(query, headers=headers)
         if response.status_code == 201:
-            print("Songs were added to the playlsit!")
+            print("Songs were added to the playlist!")
             return 0
         else:
             print(f'There was a {response.status_code} error.')
